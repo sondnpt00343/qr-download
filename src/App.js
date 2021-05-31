@@ -1,23 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import { useRef } from 'react'
+import html2canvas from 'html2canvas'
+import QRCode from 'react-qr-code'
+import './App.css'
 
 function App() {
+  const downloadRef = useRef(null)
+  const canvasElement = useRef(null)
+
+  const handleRef = (ref) => {
+    html2canvas(ref).then(canvas => {
+      canvasElement.current = canvas
+      downloadRef.current.appendChild(canvas)
+    });
+  }
+
+  const handleDownload = () => {
+    const link = document.createElement('a')
+    link.download = 'QR.png'
+    link.href = canvasElement.current.toDataURL()
+    link.click()
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <button onClick={handleDownload}>Download</button>
+
+      <div ref={downloadRef}>
+      </div>
+
+      <div className="hide">
+        <div ref={handleRef} className="App">
+          <img className="bg" src="/qa-bg.png" />
+          <QRCode value="longbd" />
+        </div>
+      </div>
     </div>
   );
 }
